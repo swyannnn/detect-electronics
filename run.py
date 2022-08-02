@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
-import time, cv2, os, urllib
+import cv2, os, urllib
 import tensorflow as tf
 import certifi, ssl
 
