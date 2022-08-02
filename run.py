@@ -147,29 +147,28 @@ def yolo3(image_RGB):
                             (x_min + box_width, y_min + box_height),
                             colour_box_current, 2)
 
-                text_box_current = '{}: {:.4f}'.format(labels[int(class_numbers[i])],
-                                                    confidences[i])
+                text_box_current = str(labels[int(class_numbers[i])])
+                # text_box_current = '{}: {:.4f}'.format(labels[int(class_numbers[i])],confidences[i])
 
                 cv2.putText(image_RGB, text_box_current, (x_min, y_min - 5),
                             cv2.FONT_HERSHEY_COMPLEX, 0.7, colour_box_current, 2)
+
 
     return image_RGB, description
 
 # Function used by both image and camera option
 def general(image_BGR):
-    # progress bar for user info while result image is still in progress
-    my_bar = st.progress(0)
-    for percent_complete in range(100):
-        time.sleep(0.1)
-        my_bar.progress(percent_complete + 1)
+    # A spinner while result image is still in progress
+    with st.spinner('Wait for it...'):
+        time.sleep(5)
 
     # connect to yolo3 function and output the final result on streamlit app
     image_BGR, description = yolo3(image_BGR)
 
     if len(description) == 0:
-        st.image(image_BGR, caption='No electrical item(s) in the image')
+        st.image(image_BGR, caption='No electronic item in the image')
     else:
-        st.image(image_BGR,caption='There is electrical item(s) in the image')
+        st.image(image_BGR,caption='There is electronic item(s) in the image')
         st.text(description)
 
 
