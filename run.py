@@ -21,21 +21,21 @@ def main():
     if option == 'Image':
         image_file = st.file_uploader("Upload an image",type=["png","jpg","jpeg"])
 
-    if image_file is not None:
-        image = Image.open(image_file)
-        image_BGR = np.array(image)
-        general(image_BGR)
+        # if image_file is not None:
+        if image_file:
+            image = Image.open(image_file)
+            image_BGR = np.array(image)
+            general(image_BGR)
 
     # if user choose 'Camera'
     elif option == 'Camera':
         img_file_buffer = st.camera_input("Take a picture")
 
         if img_file_buffer:
-            with open ('test.jpg','wb') as file:
-                file.write(img_file_buffer.getbuffer())
-            path = "C:/Users/YANN/Documents/Basics-Python/udemy/Section_6/GUI/test.jpg" 
-            general(path)
-
+            bytes_data = img_file_buffer.getvalue()
+            cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
+            image_RGB = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
+            general(image_RGB)
 
 # This file downloader demonstrates Streamlit animation.
 def download_file(file_path):
@@ -96,7 +96,6 @@ def yolo3(image_RGB):
     blob = cv2.dnn.blobFromImage(image_RGB, 1 / 255.0, (416, 416), swapRB=True, crop=False)
     network.setInput(blob)  
     output_from_network = network.forward(layers_names_output)
-
 
     bounding_boxes, confidences, class_numbers = [],[],[]
     target_index = [62,63,64,65,66,67,68,69,70,71,72,79]
