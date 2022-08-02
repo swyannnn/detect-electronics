@@ -152,7 +152,7 @@ def yolo3(image_RGB):
                             cv2.FONT_HERSHEY_COMPLEX, 0.7, colour_box_current, 2)
 
     image_BGR = cv2.cvtColor(image_RGB, cv2.COLOR_RGB2BGR)
-    path_to_save = "C:/Users/YANN/Documents/Basics-Python/udemy/Section_6/GUI/result.jpg"
+    path_to_save = "C:/Users/YANN/Documents/Basics-Python/streamlit_app/result.jpg"
     Image.fromarray(image_BGR).save(path_to_save)
     cv2.imwrite(path_to_save, image_BGR)
 
