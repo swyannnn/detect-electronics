@@ -79,7 +79,7 @@ def download_file(file_path):
 # yolov3 working included here
 def yolo3(image_RGB):
     # making list of coco.names (80 elements)
-    with open(load_network("coco.names")) as f:
+    with open("coco.names") as f:
         labels = [line.strip() for line in f]
 
     # Load the network. Because this is cached it will only happen once.
@@ -184,7 +184,7 @@ EXTERNAL_DEPENDENCIES = {
     },
     "coco.names": {
         "url": "https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/coco.names",
-        "size": os.path.getsize("https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/coco.names")
+        "size": 625
     }
 }
 
