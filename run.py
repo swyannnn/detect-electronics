@@ -76,37 +76,46 @@ def download_file(file_path):
             progress_bar.empty()
 
 
- 
 
 def yolo3(image_RGB):
-    h, w = image_RGB.shape[:2]
-    blob = cv2.dnn.blobFromImage(image_RGB, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+    # h, w = image_RGB.shape[:2]
+    # blob = cv2.dnn.blobFromImage(image_RGB, 1 / 255.0, (416, 416), swapRB=True, crop=False)
     # print('Blob shape:', blob.shape)  # (1, 3, 416, 416)
 
-    with open('C:/Users/YANN/Documents/Basics-Python/udemy/Section_6/GUI/yolo-coco-data/coco.names') as f:
+    with open('C:/Users/YANN/Documents/Basics-Python/streamlit_app/coco.names') as f:
         labels = [line.strip() for line in f]
 
-    network = cv2.dnn.readNetFromDarknet('C:/Users/YANN/Documents/Basics-Python/udemy/Section_6/GUI/yolo-coco-data/yolov3.cfg',
-                                         'C:/Users/YANN/Documents/Basics-Python/udemy/Section_6/GUI/yolo-coco-data/yolov3.weights')
+    @st.cache(allow_output_mutation=True)
+    def load_network(config_path, weights_path):
+        network = cv2.dnn.readNetFromDarknet(config_path, weights_path)
+        layers_names_all = network.getLayerNames()
+        layers_names_output = [layers_names_all[i - 1] for i in network.getUnconnectedOutLayers()]
+        return network, layers_names_output
+    network, layers_names_output = load_network("yolov3.cfg", "yolov3.weights")
 
-    layers_names_all = network.getLayerNames()
-    layers_names_output = [layers_names_all[i - 1] for i in network.getUnconnectedOutLayers()]
+    
+    # network = cv2.dnn.readNetFromDarknet('C:/Users/YANN/Documents/Basics-Python/udemy/Section_6/GUI/yolo-coco-data/yolov3.cfg',
+    #                                      'C:/Users/YANN/Documents/Basics-Python/udemy/Section_6/GUI/yolo-coco-data/yolov3.weights')
+
+    # layers_names_all = network.getLayerNames()
+    # layers_names_output = [layers_names_all[i - 1] for i in network.getUnconnectedOutLayers()]
 
     probability_minimum = 0.5
     threshold = 0.3
     colours = np.random.randint(0, 255, size=(len(labels), 3), dtype='uint8')
 
+    blob = cv2.dnn.blobFromImage(image_RGB, 1 / 255.0, (416, 416), swapRB=True, crop=False)
     network.setInput(blob)  # setting blob as input to the network
-    start = time.time()
+    # start = time.time()
     output_from_network = network.forward(layers_names_output)
-    end = time.time()
-    print('Objects Detection took {:.5f} seconds'.format(end - start))
+    # end = time.time()
+    # print('Objects Detection took {:.5f} seconds'.format(end - start))
 
-    bounding_boxes = []
-    confidences = []
-    class_numbers = []
+
+    bounding_boxes, confidences, class_numbers = [],[],[]
     target_index = [62,63,64,65,66,67,68,69,70,71,72,79]
-
+    h, w = image_RGB.shape[:2]
+    
     for result in output_from_network:
         for detected_objects in result:
             scores = detected_objects[5:]
