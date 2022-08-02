@@ -124,10 +124,10 @@ def yolo3(image_RGB):
 
     counter = 1
     if len(results) > 0:
-        description = []
+        description = str()
         for i in results.flatten():
             if (class_numbers[i]+1) in target_index:
-                description.append(f'Object {counter}: {labels[int(class_numbers[i])]}')
+                description = description + f'Object {counter}: {labels[int(class_numbers[i])]}' + "\n"
 
                 counter += 1
 
@@ -146,36 +146,21 @@ def yolo3(image_RGB):
                 cv2.putText(image_RGB, text_box_current, (x_min, y_min - 5),
                             cv2.FONT_HERSHEY_COMPLEX, 0.7, colour_box_current, 2)
 
-    image_BGR = cv2.cvtColor(image_RGB, cv2.COLOR_RGB2BGR)
-    path_to_save = "C:/Users/YANN/Documents/Basics-Python/streamlit_app/result.jpg"
-    Image.fromarray(image_BGR).save(path_to_save)
-    cv2.imwrite(path_to_save, image_BGR)
+    return image_RGB, description
 
-    cap = str()
-    with open('caption.txt','w') as caption:
-        for i in range(len(description)):
-            cap = cap + str(description[i]) + "\n"
-        caption.write(cap)
-
-    
 def general(image_BGR):
     my_bar = st.progress(0)
     for percent_complete in range(100):
         time.sleep(0.1)
         my_bar.progress(percent_complete + 1)
 
-    yolo3(image_BGR)
+    image_BGR, description = yolo3(image_BGR)
 
-    with open ('caption.txt','r') as caption:
-            one_char = caption.read(1)
-            if not one_char:
-                st.image('result.jpg',caption='No electrical item(s) in the image')
-            else:
-                st.image('result.jpg',caption='There is electrical item(s) in the image')
-                cap = str()
-                for line in caption:
-                    cap += line
-                st.text(cap)
+    if len(description) == 0:
+        st.image(image_BGR, caption='No electrical item(s) in the image')
+    else:
+        st.image(image_BGR,caption='There is electrical item(s) in the image')
+        st.text(description)
 
 
 # External files to download.
