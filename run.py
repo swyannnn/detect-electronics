@@ -7,6 +7,7 @@ import certifi, ssl
 
 
 def main():
+    # User interface
     st.title("Scanning electronic items")
 
     option = st.sidebar.selectbox(
@@ -21,8 +22,7 @@ def main():
     if option == 'Image':
         image_file = st.file_uploader("Upload an image",type=["png","jpg","jpeg"])
 
-        # if image_file is not None:
-        if image_file:
+        if image_file is not None:
             image = Image.open(image_file)
             image_BGR = np.array(image)
             general(image_BGR)
@@ -76,11 +76,13 @@ def download_file(file_path):
             progress_bar.empty()
 
 
-
+# yolov3 working included here
 def yolo3(image_RGB):
+    # making list of coco.names (80 elements)
     with open('C:/Users/YANN/Documents/Basics-Python/streamlit_app/coco.names') as f:
         labels = [line.strip() for line in f]
 
+    # Load the network. Because this is cached it will only happen once.
     @st.cache(allow_output_mutation=True)
     def load_network(config_path, weights_path):
         network = cv2.dnn.readNetFromDarknet(config_path, weights_path)
@@ -89,18 +91,22 @@ def yolo3(image_RGB):
         return network, layers_names_output
     network, layers_names_output = load_network("yolov3.cfg", "yolov3.weights")
 
+    # setting requirements to filter detected objects
+    target_index = [62,63,64,65,66,67,68,69,70,71,72,79]
     probability_minimum = 0.5
     threshold = 0.3
     colours = np.random.randint(0, 255, size=(len(labels), 3), dtype='uint8')
 
+    # assigning variables for future use
+    bounding_boxes, confidences, class_numbers = [],[],[]
+    h, w = image_RGB.shape[:2]
+
+    # creating blob & forward pass
     blob = cv2.dnn.blobFromImage(image_RGB, 1 / 255.0, (416, 416), swapRB=True, crop=False)
     network.setInput(blob)  
     output_from_network = network.forward(layers_names_output)
 
-    bounding_boxes, confidences, class_numbers = [],[],[]
-    target_index = [62,63,64,65,66,67,68,69,70,71,72,79]
-    h, w = image_RGB.shape[:2]
-
+    # extracting needed information for NMS
     for result in output_from_network:
         for detected_objects in result:
             scores = detected_objects[5:]
@@ -117,10 +123,12 @@ def yolo3(image_RGB):
                 bounding_boxes.append([x_min, y_min, int(box_width), int(box_height)])
                 confidences.append(float(confidence_current))
                 class_numbers.append(class_current)
-
+    
+    # Non-maximum Suppression
     results = cv2.dnn.NMSBoxes(bounding_boxes, confidences,
                                probability_minimum, threshold)
 
+    # extracting needed information for final output
     counter = 1
     if len(results) > 0:
         description = str()
@@ -147,12 +155,15 @@ def yolo3(image_RGB):
 
     return image_RGB, description
 
+# Function used by both image and camera option
 def general(image_BGR):
+    # progress bar for user info while result image is still in progress
     my_bar = st.progress(0)
     for percent_complete in range(100):
         time.sleep(0.1)
         my_bar.progress(percent_complete + 1)
 
+    # connect to yolo3 function and output the final result on streamlit app
     image_BGR, description = yolo3(image_BGR)
 
     if len(description) == 0:
