@@ -52,8 +52,9 @@ def download_file(file_path):
         weights_warning = st.warning("Downloading...")
         progress_bar = st.progress(0)
         with open(file_path, "wb") as output_file:
+            # with urllib.request.urlopen(EXTERNAL_DEPENDENCIES[file_path]["url"]) as response:
             with urllib.request.urlopen(EXTERNAL_DEPENDENCIES[file_path]["url"], context=ssl.create_default_context(cafile=certifi.where())) as response:
-                length = int(response.info()["Content-Length"])
+                length = int(response.info()["Content-Length"]) 
                 counter = 0
                 # MEGABYTES = 2.0 ** 20.0
                 while True:
@@ -94,7 +95,6 @@ def yolo3(image_RGB):
     target_index = [62,63,64,65,66,67,68,69,70,71,72,79]
     probability_minimum = 0.5
     threshold = 0.3
-    colours = np.random.randint(0, 255, size=(len(labels), 3), dtype='uint8')
 
     # assigning variables for future use
     bounding_boxes, confidences, class_numbers = [],[],[]
@@ -141,18 +141,14 @@ def yolo3(image_RGB):
                 x_min, y_min = bounding_boxes[i][0], bounding_boxes[i][1]
                 box_width, box_height = bounding_boxes[i][2], bounding_boxes[i][3]
 
-                # colour_box_current = colours[class_numbers[i]].tolist()
-                colour_box_current = (0,255,0).tolist()
-
                 cv2.rectangle(image_RGB, (x_min, y_min),
                             (x_min + box_width, y_min + box_height),
-                            colour_box_current, 2)
+                            (0,255,0), 2)
 
                 text_box_current = str(labels[int(class_numbers[i])])
-                # text_box_current = '{}: {:.4f}'.format(labels[int(class_numbers[i])],confidences[i])
 
                 cv2.putText(image_RGB, text_box_current, (x_min, y_min - 5),
-                            cv2.FONT_HERSHEY_COMPLEX, 0.7, colour_box_current, 2)
+                            cv2.FONT_HERSHEY_COMPLEX, 0.7, (0,255,0), 2)
 
 
     return image_RGB, description
