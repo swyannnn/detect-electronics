@@ -141,7 +141,8 @@ def yolo3(image_RGB):
                 x_min, y_min = bounding_boxes[i][0], bounding_boxes[i][1]
                 box_width, box_height = bounding_boxes[i][2], bounding_boxes[i][3]
 
-                colour_box_current = colours[class_numbers[i]].tolist()
+                # colour_box_current = colours[class_numbers[i]].tolist()
+                colour_box_current = (0,255,0).tolist()
 
                 cv2.rectangle(image_RGB, (x_min, y_min),
                             (x_min + box_width, y_min + box_height),
