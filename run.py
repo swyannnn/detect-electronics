@@ -89,7 +89,7 @@ def yolo3(image_RGB):
         layers_names_all = network.getLayerNames()
         layers_names_output = [layers_names_all[i - 1] for i in network.getUnconnectedOutLayers()]
         return network, layers_names_output
-    network, layers_names_output = load_network("yolov3.cfg", "yolov3.weights")
+    network, layers_names_output = load_network("yolov4.cfg", "yolov4.weights")
 
     # setting requirements to filter detected objects
     target_index = [62,63,64,65,66,67,68,69,70,71,72,79]
@@ -130,6 +130,7 @@ def yolo3(image_RGB):
 
     # extracting needed information for final output
     counter = 1
+    description = str()
     if len(results) > 0:
         description = str()
         for i in results.flatten():
@@ -174,13 +175,13 @@ def general(image_BGR):
 
 # External files to download.
 EXTERNAL_DEPENDENCIES = {
-    "yolov3.weights": {
-        "url": "https://pjreddie.com/media/files/yolov3.weights",
+    "yolov4.weights": {
+        "url": "https://github.com/AlexeyAB/darknet/releases/download/yolov4/yolov4.weights",
         "size": 248007048
     },
-    "yolov3.cfg": {
-        "url": "https://raw.githubusercontent.com/pjreddie/darknet/master/cfg/yolov3.cfg",
-        "size": 8342
+    "yolov4.cfg": {
+        "url": "https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/yolov4.cfg",
+        "size": 246
     },
     "coco.names": {
         "url": "https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/coco.names",
