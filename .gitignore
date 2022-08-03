@@ -1,5 +1,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-yolov3.weights
-yolov3.cfg
+yolov4.weights
+yolov4.cfg
+coco.names

@@ -49,13 +49,13 @@ def download_file(file_path):
     # These are handles to two visual elements to animate.
     weights_warning, progress_bar = None, None
     try:
-        weights_warning = st.warning("Downloading %s..." % file_path)
+        weights_warning = st.warning("Downloading...")
         progress_bar = st.progress(0)
         with open(file_path, "wb") as output_file:
             with urllib.request.urlopen(EXTERNAL_DEPENDENCIES[file_path]["url"], context=ssl.create_default_context(cafile=certifi.where())) as response:
                 length = int(response.info()["Content-Length"])
-                counter = 0.0
-                MEGABYTES = 2.0 ** 20.0
+                counter = 0
+                # MEGABYTES = 2.0 ** 20.0
                 while True:
                     data = response.read(8192)
                     if not data:
@@ -64,8 +64,7 @@ def download_file(file_path):
                     output_file.write(data)
 
                     # We perform animation by overwriting the elements.
-                    weights_warning.warning("Downloading %s... (%6.2f/%6.2f MB)" %
-                        (file_path, counter / MEGABYTES, length / MEGABYTES))
+                    weights_warning.warning(f"Downloading... {int((counter/length)*100)}%" )
                     progress_bar.progress(min(counter / length, 1.0))
 
     # Finally, we remove these visual elements by calling .empty().
