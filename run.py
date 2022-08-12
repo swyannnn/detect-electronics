@@ -92,7 +92,17 @@ def yolo3(image_RGB):
     network, layers_names_output = load_network("yolov4.cfg", "yolov4.weights")
 
     # setting requirements to filter detected objects
-    target_index = [62,63,64,65,66,67,68,69,70,71,72,79]
+    target_items = ['tvmonitor',
+                    'laptop',
+                    'mouse',
+                    'remote',
+                    'keyboard',
+                    'cell phone',
+                    'microwave',
+                    'oven',
+                    'toaster',
+                    'refrigerator',
+                    'hair drier']
     probability_minimum = 0.5
     threshold = 0.3
 
@@ -133,7 +143,7 @@ def yolo3(image_RGB):
     if len(results) > 0:
         description = str()
         for i in results.flatten():
-            if (class_numbers[i]+1) in target_index:
+            if (labels[int(class_numbers[i])]) in target_items:
                 description = description + f'Object {counter}: {labels[int(class_numbers[i])]}' + "\n"
 
                 counter += 1
