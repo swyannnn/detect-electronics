@@ -1,6 +1,5 @@
 __pycache__/
 *.py[cod]
 *$py.class
-yolov4.weights
 yolov4.cfg
 coco.names

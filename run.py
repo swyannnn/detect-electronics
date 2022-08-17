@@ -5,7 +5,6 @@ import cv2, os, urllib, time
 import tensorflow as tf
 import certifi, ssl
 
-
 def main():
     # User interface
     st.title("Scanning electronic items")
