@@ -47,32 +47,28 @@ def download_file(file_path):
 
     # These are handles to two visual elements to animate.
     weights_warning, progress_bar = None, None
-    try:
-        weights_warning = st.warning("Downloading...")
-        progress_bar = st.progress(0)
-        with open(file_path, "wb") as output_file:
-            # with urllib.request.urlopen(EXTERNAL_DEPENDENCIES[file_path]["url"]) as response:
-            with urllib.request.urlopen(EXTERNAL_DEPENDENCIES[file_path]["url"], context=ssl.create_default_context(cafile=certifi.where())) as response:
-                length = int(response.info()["Content-Length"]) 
-                counter = 0
-                # MEGABYTES = 2.0 ** 20.0
-                while True:
-                    data = response.read(8192)
-                    if not data:
-                        break
-                    counter += len(data)
-                    output_file.write(data)
-
-                    # We perform animation by overwriting the elements.
-                    weights_warning.warning(f"Downloading... {int((counter/length)*100)}%" )
-                    progress_bar.progress(min(counter / length, 1.0))
+    # try:
+    # weights_warning = st.warning("Downloading...")
+    # progress_bar = st.progress(0)
+    with open(file_path, "wb") as output_file:
+        # with urllib.request.urlopen(EXTERNAL_DEPENDENCIES[file_path]["url"]) as response:
+        with urllib.request.urlopen(EXTERNAL_DEPENDENCIES[file_path]["url"], context=ssl.create_default_context(cafile=certifi.where())) as response:
+            length = int(response.info()["Content-Length"]) 
+            counter = 0
+            # MEGABYTES = 2.0 ** 20.0
+            while True:
+                data = response.read(8192)
+                if not data:
+                    break
+                counter += len(data)
+                output_file.write(data)
 
     # Finally, we remove these visual elements by calling .empty().
-    finally:
-        if weights_warning is not None:
-            weights_warning.empty()
-        if progress_bar is not None:
-            progress_bar.empty()
+    # finally:
+    #     if weights_warning is not None:
+    #         weights_warning.empty()
+    #     if progress_bar is not None:
+    #         progress_bar.empty()
 
 
 # yolov3 working included here
@@ -180,10 +176,6 @@ def general(image_BGR):
 
 # External files to download.
 EXTERNAL_DEPENDENCIES = {
-    "yolov4.weights": {
-        "url": "https://github.com/AlexeyAB/darknet/releases/download/yolov4/yolov4.weights",
-        "size": 248007048
-    },
     "yolov4.cfg": {
         "url": "https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/yolov4.cfg",
         "size": 246
