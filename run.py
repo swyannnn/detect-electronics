@@ -8,17 +8,14 @@ import certifi, ssl
 def main():
     # User interface
     st.title("Scanning electronic items")
-
-    option = st.sidebar.selectbox(
-        'Option',
-        ('Image', 'Camera'))
+    image, camera = st.tabs(["Image", "Camera"])
 
     # Download external dependencies.
     for filename in EXTERNAL_DEPENDENCIES.keys():
         download_file(filename)
 
     # if user choose 'Image'
-    if option == 'Image':
+    with image:
         image_file = st.file_uploader("Upload an image",type=["png","jpg","jpeg"])
 
         if image_file is not None:
@@ -27,7 +24,7 @@ def main():
             general(image_BGR)
 
     # if user choose 'Camera'
-    elif option == 'Camera':
+    with camera:
         img_file_buffer = st.camera_input("Take a picture")
 
         if img_file_buffer:
@@ -47,11 +44,7 @@ def download_file(file_path):
 
     # These are handles to two visual elements to animate.
     weights_warning, progress_bar = None, None
-    # try:
-    # weights_warning = st.warning("Downloading...")
-    # progress_bar = st.progress(0)
     with open(file_path, "wb") as output_file:
-        # with urllib.request.urlopen(EXTERNAL_DEPENDENCIES[file_path]["url"]) as response:
         with urllib.request.urlopen(EXTERNAL_DEPENDENCIES[file_path]["url"], context=ssl.create_default_context(cafile=certifi.where())) as response:
             length = int(response.info()["Content-Length"]) 
             counter = 0
@@ -62,14 +55,6 @@ def download_file(file_path):
                     break
                 counter += len(data)
                 output_file.write(data)
-
-    # Finally, we remove these visual elements by calling .empty().
-    # finally:
-    #     if weights_warning is not None:
-    #         weights_warning.empty()
-    #     if progress_bar is not None:
-    #         progress_bar.empty()
-
 
 # yolov3 working included here
 def yolo3(image_RGB):
